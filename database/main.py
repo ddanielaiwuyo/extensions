@@ -1,7 +1,7 @@
 import psycopg
 
 import lib.database_connection as database
-from lib.stock_repository import  StockRepository
+from lib.stock_repository import StockRepository
 from lib.stock import create_new_stock_item
 from lib.order import get_new_orders
 from lib.order_repository import OrderRepository
@@ -47,11 +47,12 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     stock_repo = StockRepository(db_conn)
     order_repo = OrderRepository(db_conn)
 
-
     if user_choice == LIST_ITEMS_CHOICE:
         current_stocks = stock_repo.get_all()
         for idx, stock in enumerate(current_stocks, start=1):
-            print(f"  {idx:<2} {stock.name:<25} £ {stock.price:<10} {stock.quantity:>5}")
+            print(
+                f"  {idx:<2} {stock.name:<25} £ {stock.price:<10} {stock.quantity:>5}"
+            )
 
     elif user_choice == CREATE_NEW_ITEM_CHOICE:
         new_stocks = create_new_stock_item()
@@ -99,7 +100,8 @@ def main() -> None:
             traceback.print_exc()
             return
 
-
     conn.close()
+
+
 if __name__ == "__main__":
     main()

@@ -7,11 +7,11 @@ def connect() -> psycopg.Connection:
     return conn
 
 def seed(conn, seed_path=None):
-    content = ""
     if seed_path is None:
         print("  Using default seed path: seeds/extension_db.sql",)
         seed_path = "seeds/extension_db.sql"
 
+    content = ""
     with open(seed_path, "r") as f:
         content = f.read()
 
