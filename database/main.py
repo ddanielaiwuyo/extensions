@@ -47,7 +47,6 @@ QUIT_CHOICE = 4
 # [x]. list_stock_items() from db
 # [x]. list_all_orders() from db
 # [x]. create_new_item() with db
-# [5]. date_of_an_order() from db
 # [x]. create_new_order()
 def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     stock_repo = StockRepository(db_conn)
@@ -83,7 +82,7 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
         return
 
 
-def main():
+def main() -> None:
     conn = connect_to_db()
     while True:
         try:
