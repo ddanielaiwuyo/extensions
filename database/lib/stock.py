@@ -1,6 +1,6 @@
 from lib.stock_repository import StockItem
 
-def create_new_item() -> list[StockItem]:
+def create_new_stock_item() -> list[StockItem]:
     print(" CREATING NEW STOCK ITEM ")
     new_stocks = []
     while True:

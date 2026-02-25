@@ -25,7 +25,7 @@ class Utils:
             try:
                 choice = int(input( " enter: "))
                 choice = choice - 1
-                if choice < 0 or choice > max_choice:
+                if choice < 0 or choice > max_choice - 1:
                     print(" provide choice between 1 and ", max_choice)
                     continue
 

@@ -1,10 +1,12 @@
 import psycopg
-from lib.order import OrderEntity, get_all_orders
-from lib.utils import Utils
+
 from lib.database_connection import connect_to_db
 from lib.stock_repository import StockItem, StockRepository
-from lib.stock import create_new_item
+from lib.stock import create_new_stock_item
+from lib.order import get_new_orders
+from lib.order_repository import OrderRepository
 import traceback
+
 
 def main_menu() -> int:
     welcome_msg = """
@@ -33,66 +35,72 @@ def main_menu() -> int:
         except ValueError:
             print(" please provide a valid number")
 
+
 LIST_ITEMS = 0
 CREATE_NEW_ITEM = 1
 LIST_ALL_ORDERS = 2
 CREATE_NEW_ORDER = 3
 QUIT = 4
 
+
 def list_all_items() -> None:
     mock_items = ["chess game", "new patched updates"]
     print(" displaying items")
     for i, item in enumerate(mock_items, start=1):
-        print( f" {i}. {item}")
+        print(f" {i}. {item}")
     pass
+
 
 def list_all_orders() -> None:
     mock_orders = ["chess game", "new patched updates"]
     print(" displaying items")
     for i, item in enumerate(mock_orders, start=1):
-        print( f" {i}. {item}")
+        print(f" {i}. {item}")
 
 
-def create_new_order(stock: list[StockItem]) -> OrderEntity:
-    # 1. show all items in stock
-    # 2. get quantity
-    # 3. confirm and create order
-    max_choice = len(stock) - 1
-    user_choice = Utils.get_choice(max_choice)
-
-    selected_item = stock[user_choice]
-    qty = Utils.get_quantity(selected_item.quantity)
-
-    print(" please provide the following for your reciept")
-    username = input(" name: ")
-    new_order = OrderEntity(username,selected_item, qty)
-    return new_order
-    
+# def create_new_order(stock: list[StockItem]) -> OrderEntity:
+#     # 1. show all items in stock
+#     # 2. get quantity
+#     # 3. confirm and create order
+#     max_choice = len(stock)
+#     user_choice = Utils.get_choice(max_choice)
+#
+#     selected_stock_item = stock[user_choice]
+#     qty = Utils.get_quantity(selected_stock_item.quantity)
+#
+#     print(" please provide the following for your reciept")
+#     username = input(" name: ")
+#     new_order = OrderEntity(username, selected_stock_item, qty)
+#     new_order.stock_id = selected_stock_item.id
+#     return new_order
 
 
 # working order
-# [x]. list_stock_items() from db 
+# [x]. list_stock_items() from db
 # [x]. list_all_orders() from db
 # [x]. create_new_item() with db
 # [5]. date_of_an_order() from db
 # [6]. create_new_order()
 def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     stock_repo = StockRepository(db_conn)
-    stock = [
-        StockItem("Airpods", 139.21, 50), 
-        StockItem("Headphones", 500.00, 500), 
-        StockItem("Mercedes Pen", 399.99, 121), 
-    ]
+    # stock = [
+    #     StockItem("Airpods", 139.21, 50),
+    #     StockItem("Headphones", 500.00, 500),
+    #     StockItem("Mercedes Pen", 399.99, 121),
+    # ]
+    order_repo = OrderRepository(db_conn)
+
+    current_stocks = stock_repo.get_all()
 
     if user_choice == LIST_ITEMS:
         all_stocks = stock_repo.get_all()
-        for stock in all_stocks:
-            print(stock)
+        for stock in enumerate(stocks, start=0):
+            print(f" {stock.name} {stock.price} {stock.quantity}")
 
     elif user_choice == CREATE_NEW_ITEM:
-        new_stocks = create_new_item()
-        for stock in new_stocks:
-            stock_repo.add_item(stock)
+        new_stocks = create_new_stock_item()
+        for stock_item in new_stocks:
+            stock_repo.add_item(stock_item)
 
         print(" STOCKS UPDATED ")
     elif user_choice == LIST_ALL_ORDERS:
@@ -100,9 +108,15 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
         print(" ====  all orders from db ====")
         for order in all_orders:
             print(order)
+
     elif user_choice == CREATE_NEW_ORDER:
-        new_order = create_new_order(stock)
-        print("\n new order came in:", new_order)
+        new_orders = get_new_orders(current_stocks)
+        for new_order in new_orders:
+            order_repo.add(new_order)
+
+        print(f" total of {len(new_orders)} made")
+        # print("\n", new_order)
+
     else:
         print(" Quitting application")
         return
@@ -126,6 +140,7 @@ def main():
             print(" unexpected error!")
             traceback.print_exc()
             return
+
 
 if __name__ == "__main__":
     main()

@@ -1,59 +1,37 @@
-from datetime import date
 from typing import override
-
+from datetime import date
+from lib.utils import Utils
 import psycopg
-
-from lib.database_connection import connect_to_db
-
-class OrderEntity:
-    def __init__(self, customer_name, quantity, total_price, order_id=None, stock_item=None, stock_id=None, ):
-        self.id = order_id
-        self.customer_name = customer_name
-        self.quantity = quantity
-        self.total_price = total_price
-        self.stock_id = stock_id
-        self.stock_item = stock_item
-        self.purchased_at = date.today()
-
-    def cal_total_price(self, unit_price):
-        self.total_price = self.quantity  * unit_price
-
-    @override
-    def __repr__(self) -> str:
-        return f""" 
-        Order Id: {self.id}
-        Customer Name: {self.customer_name}
-        Quantity: {self.quantity}
-        Purchase date: {self.purchased_at}
-        Total Price: £{self.total_price:.2f}
-        Stock Id: {self.stock_id}
-        """
+from lib.order_repository import OrderEntity, OrderRepository
+from lib.stock_repository import StockItem
 
 
-
-def get_all_orders(conn: psycopg.Connection) -> list[None]:
-    query = "SELECT * FROM orders"
-    results = None
-    with conn.cursor() as cursor:
-        response = cursor.execute(query)
-        results = response.fetchall()
-
-    if results is None:
-        print(" results returned for all orders is none")
-        print(results)
-        return []
-
+def get_new_orders(stocks: list[StockItem]) -> list[OrderEntity]:
     all_orders = []
-    for row in results:
-        entity = OrderEntity(
-                row["customer_name"], row["quantity"],
-                row["total_price"]/100
-                )
-        entity.stock_id = row["stock_id"]
-        entity.id = row["id"]
-        entity.purchased_at = row["purchased_at"]
+    while True:
+        try:
+            for idx, stock in enumerate(stocks, start=1):
+                print(f"  {idx}.  {stock.name} £{stock.price} {stock.quantity}")
 
-        all_orders.append(entity)
+            max_choice = len(stocks)
+            user_choice = Utils.get_choice(max_choice)
 
-    return all_orders
+            selected_stock_item = stocks[user_choice]
+            qty = Utils.get_quantity(selected_stock_item.quantity)
 
+            print("\n  Please provide the following for your reciept")
+            total_price = qty * selected_stock_item.price
+            customer_name = input(" name: ")
+            print()
+
+            new_order = OrderEntity(customer_name, qty, total_price)
+            new_order.stock_id = selected_stock_item.id
+            new_order.stock_item = selected_stock_item
+
+            all_orders.append(new_order)
+            choice = input(" Make a new order?[y/n]: ")
+            if choice.lower().strip() in ["n", "no"]:
+                return all_orders
+
+        except Exception as err:
+            raise (err)
