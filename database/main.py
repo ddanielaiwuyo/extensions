@@ -2,7 +2,8 @@ import psycopg
 from lib.order import OrderEntity, get_all_orders
 from lib.utils import Utils
 from lib.database_connection import connect_to_db
-from lib.stock import StockItem, list_stock_items
+from lib.stock_repository import StockItem, StockRepository
+from lib.stock import create_new_item
 import traceback
 
 def main_menu() -> int:
@@ -45,9 +46,6 @@ def list_all_items() -> None:
         print( f" {i}. {item}")
     pass
 
-def create_new_item() -> None:
-    pass
-
 def list_all_orders() -> None:
     mock_orders = ["chess game", "new patched updates"]
     print(" displaying items")
@@ -74,9 +72,12 @@ def create_new_order(stock: list[StockItem]) -> OrderEntity:
 
 # working order
 # [x]. list_stock_items() from db 
-# [2]. list_all_orders() from db
-# [3]. create_new_order()
+# [x]. list_all_orders() from db
+# [x]. create_new_item() with db
+# [5]. date_of_an_order() from db
+# [6]. create_new_order()
 def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
+    stock_repo = StockRepository(db_conn)
     stock = [
         StockItem("Airpods", 139.21, 50), 
         StockItem("Headphones", 500.00, 500), 
@@ -84,9 +85,16 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     ]
 
     if user_choice == LIST_ITEMS:
-        list_stock_items(db_conn) 
+        all_stocks = stock_repo.get_all()
+        for stock in all_stocks:
+            print(stock)
+
     elif user_choice == CREATE_NEW_ITEM:
-        print(" still under construction...")
+        new_stocks = create_new_item()
+        for stock in new_stocks:
+            stock_repo.add_item(stock)
+
+        print(" STOCKS UPDATED ")
     elif user_choice == LIST_ALL_ORDERS:
         all_orders = get_all_orders(db_conn)
         print(" ====  all orders from db ====")

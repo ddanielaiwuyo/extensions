@@ -57,7 +57,3 @@ def get_all_orders(conn: psycopg.Connection) -> list[None]:
 
     return all_orders
 
-
-# if __name__ == "__main__":
-#     conn = connect_to_db()
-#     get_all_orders(conn)

@@ -1,43 +1,35 @@
-import psycopg
-from typing import override
+from lib.stock_repository import StockItem
 
-class StockItem:
-    def __init__(self, name, price, quantity, id=None):
-        self.id = id
-        self.name = name
-        self.price = price
-        self.quantity = quantity
-    
-    @override
-    def __repr__(self) -> str:
-        return f"""
-    Id: {self.id}
-    Stock Name: {self.name}  
-    Price: £{self.price}
-    Quantity: {self.quantity}
-    """
+def create_new_item() -> list[StockItem]:
+    print(" CREATING NEW STOCK ITEM ")
+    new_stocks = []
+    while True:
+        try:
+            name = input(" name: ")
+            price = float(input(" unit price: "))
+            quantity = int(input(" stock quantity: "))
 
-def get_stock_items(conn: psycopg.Connection) -> list[StockItem]:
-    results = None
-    with conn.cursor() as cursor:
-        response = cursor.execute("select * from stock_items", )
-        results = response.fetchall()
+            if len(name.strip()) == 0:
+                print(" please provide a valid name for stock")
+                continue
+            elif price <= 0.00:
+                print(" unit price must not be 0 or less")
+                continue
+            elif quantity <= 0:
+                print(" quantity must not be 0 or less")
+                continue
 
+            new_item = StockItem(name, price, quantity)
+            new_stocks.append(new_item)
 
-    stocks = []
-    for row in results:
-        stock = StockItem(
-            row["name"], row["price"] / 100, 
-            row["quantity"], row["id"]
-                )
-        stocks.append(stock)
+            choice = input(" add another item?[y/n]: ")
 
+            if choice.lower().split() in ["y", "yes"]:
+                print(choice.lower().split())
+                continue
+            else:
+                return new_stocks
 
-    return stocks
-
-def list_stock_items(conn: psycopg.Connection):
-    print(" showing all stock items")
-    stocks = get_stock_items(conn)
-    for item in stocks:
-        print(item)
+        except ValueError:
+            print(" please enter the appropriate values")
 
