@@ -1,11 +1,13 @@
 from pytest import mark
-from lib.database_connection import connect_to_db
+# from lib.database_connection import connect_to_db
+import lib.database_connection as database
 
 
 @mark.it("Database is initilaised with seed")
 def test_database_connection_initialisation():
     test_seed_path = "seeds/test_seed.sql"
-    conn = connect_to_db(test_seed_path)
+    conn = database.connect()
+    database.seed(conn, test_seed_path)
 
     actual_result = None
     with conn.cursor() as cursor:

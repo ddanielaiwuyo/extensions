@@ -1,6 +1,6 @@
 from datetime import date
 from lib.order_repository import *
-from lib.database_connection import *
+import lib.database_connection as database
 from pytest import mark
 
 # PRICES are stored as minor-cents, 
@@ -9,7 +9,8 @@ from pytest import mark
 # This is to avoid floating errors and parsing magic
 @mark.it("All orders from the seed database return expected result")
 def test_get_all_orders():
-    conn = connect_to_db()
+    conn = database.connect()
+    database.seed(conn)
     order_1 = OrderEntity("Bill Evans", 1, 139.99)
     order_1.id = 1
     order_1.stock_id = 3
@@ -29,7 +30,9 @@ def test_get_all_orders():
 
 @mark.it("Order is added to the database and yields the same value")
 def test_add_order():
-    conn = connect_to_db()
+    conn = database.connect()
+    database.seed(conn, "seeds/extension_db.sql")
+
     order = OrderEntity("Fyodor Doestoeyesky", 1, 13999)
     order.purchased_at = date.today()
 

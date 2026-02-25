@@ -1,7 +1,7 @@
 import psycopg
 
-from lib.database_connection import connect_to_db
-from lib.stock_repository import StockItem, StockRepository
+import lib.database_connection as database
+from lib.stock_repository import  StockRepository
 from lib.stock import create_new_stock_item
 from lib.order import get_new_orders
 from lib.order_repository import OrderRepository
@@ -43,19 +43,13 @@ CREATE_NEW_ORDER_CHOICE = 3
 QUIT_CHOICE = 4
 
 
-# working order
-# [x]. list_stock_items() from db
-# [x]. list_all_orders() from db
-# [x]. create_new_item() with db
-# [x]. create_new_order()
 def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     stock_repo = StockRepository(db_conn)
     order_repo = OrderRepository(db_conn)
 
-    current_stocks = stock_repo.get_all()
-    all_orders = order_repo.get_all()
 
     if user_choice == LIST_ITEMS_CHOICE:
+        current_stocks = stock_repo.get_all()
         for idx, stock in enumerate(current_stocks, start=1):
             print(f"  {idx:<2} {stock.name:<25} £ {stock.price:<10} {stock.quantity:>5}")
 
@@ -66,12 +60,14 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
 
         print("  ===== STOCKS UPDATED ===== ")
     elif user_choice == LIST_ALL_ORDERS_CHOICE:
+        all_orders = order_repo.get_all()
         for idx, order in enumerate(all_orders, start=1):
             print(
                 f"""  {idx:<2} {order.customer_name:<25} £ {order.total_price:<10} {order.quantity:<4} {order.purchased_at.strftime('%d %B %Y')}"""
             )
 
     elif user_choice == CREATE_NEW_ORDER_CHOICE:
+        current_stocks = stock_repo.get_all()
         new_orders = get_new_orders(current_stocks)
         for new_order in new_orders:
             order_repo.add(new_order)
@@ -83,7 +79,8 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
 
 
 def main() -> None:
-    conn = connect_to_db()
+    conn = database.connect()
+    database.seed(conn)
     while True:
         try:
             user_choice = main_menu()
@@ -103,5 +100,6 @@ def main() -> None:
             return
 
 
+    conn.close()
 if __name__ == "__main__":
     main()
