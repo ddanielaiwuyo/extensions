@@ -18,7 +18,7 @@ class StockItem:
     """
 
 class StockRepository:
-    def __init__(self, db_conn: psycopg.Connection):
+    def __init__(self, db_conn: psycopg.Connection) -> None:
         self.conn = db_conn
 
     def add_item(self, stock: StockItem) -> None:

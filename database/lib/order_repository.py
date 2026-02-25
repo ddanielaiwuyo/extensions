@@ -1,10 +1,23 @@
 import psycopg
-import traceback
 from datetime import date
 from typing import override
 
+
+# OrderEntity represents how an Order
+# is represented in the database.
+# No value should be added into the `stock_item` argument
+# when sending to the database as this is only provided
+# when doing joins on the the `stock_item` and `orders` table
 class OrderEntity:
-    def __init__(self, customer_name, quantity, total_price, order_id=None, stock_item=None, stock_id=None):
+    def __init__(
+        self,
+        customer_name,
+        quantity,
+        total_price,
+        order_id=None,
+        stock_item=None,
+        stock_id=None,
+    ):
         self.id = order_id
         self.customer_name = customer_name
         self.quantity = quantity
@@ -12,9 +25,6 @@ class OrderEntity:
         self.stock_id = stock_id
         self.stock_item = stock_item
         self.purchased_at = date.today()
-
-    def cal_total_price(self, unit_price):
-        self.total_price = self.quantity  * unit_price
 
     @override
     def __repr__(self) -> str:
@@ -27,8 +37,9 @@ class OrderEntity:
         Stock Id: {self.stock_id}
         """
 
+
 class OrderRepository:
-    def __init__(self, db_conn: psycopg.Connection):
+    def __init__(self, db_conn: psycopg.Connection) -> None:
         self.conn = db_conn
 
     def add(self, order: OrderEntity) -> None:
@@ -38,37 +49,42 @@ class OrderRepository:
         """
 
         try:
-            params = [order.customer_name, order.quantity, order.total_price, order.purchased_at, order.stock_id]
+            params = [
+                order.customer_name,
+                order.quantity,
+                order.total_price,
+                order.purchased_at,
+                order.stock_id,
+            ]
             with self.conn.cursor() as cursor:
                 cursor.execute(query, params)
                 self.conn.commit()
-        except psycopg.Error as err :
+        except psycopg.Error as err:
             print(" UNEXPECTED ERROR OCCURED\n")
             raise psycopg.Error(err)
-            # traceback.print_exc
-
-
-        
 
     def get_all(self) -> list[OrderEntity]:
         query = "SELECT * FROM orders"
         results = None
-        with self.conn.cursor() as cursor:
-            response = cursor.execute(query)
-            results = response.fetchall()
+        try:
+            with self.conn.cursor() as cursor:
+                response = cursor.execute(query)
+                results = response.fetchall()
 
-        if results is None:
-            print(" results returned for all orders is none")
-            return results
+            if results is None:
+                print(" results returned for all orders is none")
+                return results
 
-        all_orders = []
-        for row in results:
-            entity = OrderEntity( row["customer_name"], row["quantity"], row["total_price"]/100) # type: ignore
-            entity.stock_id = row["stock_id"] # type: ignore
-            entity.id = row["id"] # type: ignore
-            entity.purchased_at = row["purchased_at"] # type: ignore
+            all_orders = []
+            for row in results:
+                entity = OrderEntity(row["customer_name"], row["quantity"], row["total_price"] / 100)  # type: ignore
+                entity.stock_id = row["stock_id"]  # type: ignore
+                entity.id = row["id"]  # type: ignore
+                entity.purchased_at = row["purchased_at"]  # type: ignore
 
-            all_orders.append(entity)
+                all_orders.append(entity)
 
-        return all_orders
-
+            return all_orders
+        except Exception as err:
+            print(" unexpected error occured!")
+            raise (err)

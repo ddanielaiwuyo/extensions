@@ -36,5 +36,6 @@ INSERT INTO orders (
 ('John Doe', 2, 160000, '2020-01-19', 2),
 ('Jonathan Blow',  1, 80099, '2026-04-25', 2),
 ('Bill Evans', 1, 13999,  '2021-11-12', 3),
-('Phantogram Vivienne', 40, 1600000,  '2011-11-11', 4);
+('Phantogram Vivienne', 4, 160000,  '2011-11-11', 4);
+
 

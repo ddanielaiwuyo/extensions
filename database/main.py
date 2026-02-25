@@ -36,43 +36,11 @@ def main_menu() -> int:
             print(" please provide a valid number")
 
 
-LIST_ITEMS = 0
-CREATE_NEW_ITEM = 1
-LIST_ALL_ORDERS = 2
-CREATE_NEW_ORDER = 3
-QUIT = 4
-
-
-def list_all_items() -> None:
-    mock_items = ["chess game", "new patched updates"]
-    print(" displaying items")
-    for i, item in enumerate(mock_items, start=1):
-        print(f" {i}. {item}")
-    pass
-
-
-def list_all_orders() -> None:
-    mock_orders = ["chess game", "new patched updates"]
-    print(" displaying items")
-    for i, item in enumerate(mock_orders, start=1):
-        print(f" {i}. {item}")
-
-
-# def create_new_order(stock: list[StockItem]) -> OrderEntity:
-#     # 1. show all items in stock
-#     # 2. get quantity
-#     # 3. confirm and create order
-#     max_choice = len(stock)
-#     user_choice = Utils.get_choice(max_choice)
-#
-#     selected_stock_item = stock[user_choice]
-#     qty = Utils.get_quantity(selected_stock_item.quantity)
-#
-#     print(" please provide the following for your reciept")
-#     username = input(" name: ")
-#     new_order = OrderEntity(username, selected_stock_item, qty)
-#     new_order.stock_id = selected_stock_item.id
-#     return new_order
+LIST_ITEMS_CHOICE = 0
+CREATE_NEW_ITEM_CHOICE = 1
+LIST_ALL_ORDERS_CHOICE = 2
+CREATE_NEW_ORDER_CHOICE = 3
+QUIT_CHOICE = 4
 
 
 # working order
@@ -80,45 +48,38 @@ def list_all_orders() -> None:
 # [x]. list_all_orders() from db
 # [x]. create_new_item() with db
 # [5]. date_of_an_order() from db
-# [6]. create_new_order()
+# [x]. create_new_order()
 def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     stock_repo = StockRepository(db_conn)
-    # stock = [
-    #     StockItem("Airpods", 139.21, 50),
-    #     StockItem("Headphones", 500.00, 500),
-    #     StockItem("Mercedes Pen", 399.99, 121),
-    # ]
     order_repo = OrderRepository(db_conn)
 
     current_stocks = stock_repo.get_all()
+    all_orders = order_repo.get_all()
 
-    if user_choice == LIST_ITEMS:
-        all_stocks = stock_repo.get_all()
-        for stock in enumerate(stocks, start=0):
-            print(f" {stock.name} {stock.price} {stock.quantity}")
+    if user_choice == LIST_ITEMS_CHOICE:
+        for idx, stock in enumerate(current_stocks, start=1):
+            print(f"  {idx:<2} {stock.name:<25} £ {stock.price:<10} {stock.quantity:>5}")
 
-    elif user_choice == CREATE_NEW_ITEM:
+    elif user_choice == CREATE_NEW_ITEM_CHOICE:
         new_stocks = create_new_stock_item()
         for stock_item in new_stocks:
             stock_repo.add_item(stock_item)
 
-        print(" STOCKS UPDATED ")
-    elif user_choice == LIST_ALL_ORDERS:
-        all_orders = get_all_orders(db_conn)
-        print(" ====  all orders from db ====")
-        for order in all_orders:
-            print(order)
+        print("  ===== STOCKS UPDATED ===== ")
+    elif user_choice == LIST_ALL_ORDERS_CHOICE:
+        for idx, order in enumerate(all_orders, start=1):
+            print(
+                f"""  {idx:<2} {order.customer_name:<25} £ {order.total_price:<10} {order.quantity:<4} {order.purchased_at.strftime('%d %B %Y')}"""
+            )
 
-    elif user_choice == CREATE_NEW_ORDER:
+    elif user_choice == CREATE_NEW_ORDER_CHOICE:
         new_orders = get_new_orders(current_stocks)
         for new_order in new_orders:
             order_repo.add(new_order)
 
-        print(f" total of {len(new_orders)} made")
-        # print("\n", new_order)
-
+        print(f"  Total of {len(new_orders)} made")
     else:
-        print(" Quitting application")
+        print("  Quitting application")
         return
 
 
@@ -129,15 +90,16 @@ def main():
             user_choice = main_menu()
             matcher(user_choice, conn)
 
-            new_op = input(" start again?[y/n]: ")
+            print()
+            new_op = input("  Go back to main menu or quit?[y/n]: ")
             if new_op.lower() in ["n", "no"]:
-                print(" see you another time")
+                print("  See you another time")
                 break
         except KeyboardInterrupt:
-            print(" closing application\n")
+            print("  Closing application\n")
             return
         except Exception:
-            print(" unexpected error!")
+            print("  Unexpected error!")
             traceback.print_exc()
             return
 

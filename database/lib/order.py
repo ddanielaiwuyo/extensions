@@ -11,17 +11,18 @@ def get_new_orders(stocks: list[StockItem]) -> list[OrderEntity]:
     while True:
         try:
             for idx, stock in enumerate(stocks, start=1):
-                print(f"  {idx}.  {stock.name} £{stock.price} {stock.quantity}")
+                print(f"  {idx:<2} {stock.name:<25} £ {stock.price:<10} {stock.quantity:>5}")
 
             max_choice = len(stocks)
+            print("  Please select an item\n")
             user_choice = Utils.get_choice(max_choice)
 
             selected_stock_item = stocks[user_choice]
             qty = Utils.get_quantity(selected_stock_item.quantity)
 
-            print("\n  Please provide the following for your reciept")
+            print("\n  Please provide the following for your reciept\n")
             total_price = qty * selected_stock_item.price
-            customer_name = input(" name: ")
+            customer_name = input("  Name: ")
             print()
 
             new_order = OrderEntity(customer_name, qty, total_price)
@@ -29,7 +30,7 @@ def get_new_orders(stocks: list[StockItem]) -> list[OrderEntity]:
             new_order.stock_item = selected_stock_item
 
             all_orders.append(new_order)
-            choice = input(" Make a new order?[y/n]: ")
+            choice = input("  Make a new order?[y/n]: ")
             if choice.lower().strip() in ["n", "no"]:
                 return all_orders
 
