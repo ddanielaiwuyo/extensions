@@ -1,7 +1,8 @@
+import psycopg
 from lib.order import Order
 from lib.utils import Utils
-from lib.stock import StockItem
-import lib.stock as Stock
+from lib.database_connection import connect_to_db
+from lib.stock import StockItem, list_stock_items
 import traceback
 
 def main_menu() -> int:
@@ -61,7 +62,6 @@ def create_new_order(stock: list[StockItem]) -> Order:
     # 1. show all items in stock
     # 2. get quantity
     # 3. confirm and create order
-    list_all_items2(stock)
     max_choice = len(stock) - 1
     user_choice = Utils.get_choice(max_choice)
 
@@ -76,20 +76,21 @@ def create_new_order(stock: list[StockItem]) -> Order:
 
 
 # working order
-# [1]. list_stock_items() from db
-# [2]. create_new_order()
-def matcher(user_choice: int) -> None:
+# [x]. list_stock_items() from db 
+# [2]. list_all_orders() from db
+# [3]. create_new_order()
+def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     stock = [
         StockItem("Airpods", 139.21, 50), 
         StockItem("Headphones", 500.00, 500), 
         StockItem("Mercedes Pen", 399.99, 121), 
     ]
+
     if user_choice == LIST_ITEMS:
-        Stock.list_stock_items() 
+        list_stock_items(db_conn) 
     elif user_choice == CREATE_NEW_ITEM:
         print(" still under construction...")
     elif user_choice == LIST_ALL_ORDERS:
-        # list_all_orders()
         print(" still under construction...")
     elif user_choice == CREATE_NEW_ORDER:
         new_order = create_new_order(stock)
@@ -100,10 +101,11 @@ def matcher(user_choice: int) -> None:
 
 
 def main():
+    conn = connect_to_db()
     while True:
         try:
             user_choice = main_menu()
-            matcher(user_choice)
+            matcher(user_choice, conn)
 
             new_op = input(" start again?[y/n]: ")
             if new_op.lower() in ["n", "no"]:

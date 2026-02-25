@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS orders (
 	id SERIAL PRIMARY KEY NOT NULL,
 	customer_name TEXT NOT NULL,
 	quantity INT NOT NULL,
+	total_price INT NOT NULL,
 	purchased_at DATE NOT NULL,
 	stock_id INT REFERENCES stock_items(id),
 	created_at TIMESTAMP
@@ -26,3 +27,14 @@ VALUES ('Airpods', 13999, 103),
 ('Sony Headphones', 80099, 300),
 ('El Cinco', 49999, 5),
 ('Mercedes Pen', 39999, 30);
+
+INSERT INTO orders (
+	customer_name, quantity, purchased_at, stock_id
+) VALUES 
+('Casey Meuratory', 1, '2026-05-25', 1),
+('Jonathan Blow', 3, '2026-04-25', 1),
+('John Doe', 2, '2020-01-19', 2);
+('Jonathan Blow', 1, '2026-04-25', 2),
+('Bill Evans', 1, '2021-11-12', 3),
+('Phantogram Vivienne', 40, '2011-11-11', 4);
+

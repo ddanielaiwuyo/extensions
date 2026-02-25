@@ -1,5 +1,5 @@
 import psycopg
-from psycopg.rows import dict_row
+# from psycopg.rows import dict_row
 from typing import override
 
 class StockItem:
@@ -18,24 +18,7 @@ class StockItem:
     Quantity: {self.quantity}
     """
 
-
-def connect_to_db() -> psycopg.Connection:
-    seed_path = "seeds/extension_db.sql"
-    content = ""
-    with open(seed_path, "r") as f:
-        content = f.read()
-    
-    connstr = "postgresql://localhost/extension_db"
-    conn = psycopg.connect(connstr, row_factory=dict_row)
-
-    with conn.cursor() as cursor:
-        cursor.execute(content)
-        conn.commit()
-
-    return conn
-
-def get_stock_items() -> list[StockItem]:
-    conn = connect_to_db()
+def get_stock_items(conn: psycopg.Connection) -> list[StockItem]:
     results = None
     with conn.cursor() as cursor:
         response = cursor.execute("select * from stock_items", )
@@ -53,11 +36,11 @@ def get_stock_items() -> list[StockItem]:
 
     return stocks
 
-def list_stock_items():
+def list_stock_items(conn: psycopg.Connection):
     print(" showing all stock items")
-    stocks = get_stock_items()
+    stocks = get_stock_items(conn)
     for item in stocks:
         print(item)
 
-if __name__ == "__main__":
-    list_stock_items()
+# if __name__ == "__main__":
+#     list_stock_items()
