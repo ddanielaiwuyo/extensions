@@ -24,8 +24,7 @@ def create_new_stock_item() -> list[StockItem]:
 
             choice = input(" add another item?[y/n]: ")
 
-            if choice.lower().split() in ["y", "yes"]:
-                print(choice.lower().split())
+            if choice.lower().strip() in ["y", "yes"]:
                 continue
             else:
                 return new_stocks
