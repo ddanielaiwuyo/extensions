@@ -51,12 +51,13 @@ def get_stock_items() -> list[StockItem]:
         stocks.append(stock)
 
 
-    for item in stocks:
-        print(item)
     return stocks
 
 def list_stock_items():
-    _ = get_stock_items()
+    print(" showing all stock items")
+    stocks = get_stock_items()
+    for item in stocks:
+        print(item)
 
 if __name__ == "__main__":
     list_stock_items()

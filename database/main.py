@@ -1,5 +1,7 @@
-from lib.order import StockItem, Order
+from lib.order import Order
 from lib.utils import Utils
+from lib.stock import StockItem
+import lib.stock as Stock
 import traceback
 
 def main_menu() -> int:
@@ -51,9 +53,9 @@ def list_all_orders() -> None:
     for i, item in enumerate(mock_orders, start=1):
         print( f" {i}. {item}")
 
-def list_all_items2(stock: list[StockItem]) -> None:
-    for idx, item in enumerate(stock, start=1):
-        print( f" {idx}.   {item.name}  {item.price}  {item.quantity}")
+# def list_all_items2(stock: list[StockItem]) -> None:
+#     for idx, item in enumerate(stock, start=1):
+#         print( f" {idx}.   {item.name}  {item.price}  {item.quantity}")
 
 def create_new_order(stock: list[StockItem]) -> Order:
     # 1. show all items in stock
@@ -83,12 +85,8 @@ def matcher(user_choice: int) -> None:
         StockItem("Mercedes Pen", 399.99, 121), 
     ]
     if user_choice == LIST_ITEMS:
-        print(" still under construction...")
-        full_stock = get_stock_items()
-        list_stock_items(full_stock)
-
+        Stock.list_stock_items() 
     elif user_choice == CREATE_NEW_ITEM:
-        # create_new_item()
         print(" still under construction...")
     elif user_choice == LIST_ALL_ORDERS:
         # list_all_orders()
