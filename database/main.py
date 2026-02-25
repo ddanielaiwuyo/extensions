@@ -1,5 +1,5 @@
 import psycopg
-from lib.order import Order
+from lib.order import OrderEntity, get_all_orders
 from lib.utils import Utils
 from lib.database_connection import connect_to_db
 from lib.stock import StockItem, list_stock_items
@@ -54,11 +54,8 @@ def list_all_orders() -> None:
     for i, item in enumerate(mock_orders, start=1):
         print( f" {i}. {item}")
 
-# def list_all_items2(stock: list[StockItem]) -> None:
-#     for idx, item in enumerate(stock, start=1):
-#         print( f" {idx}.   {item.name}  {item.price}  {item.quantity}")
 
-def create_new_order(stock: list[StockItem]) -> Order:
+def create_new_order(stock: list[StockItem]) -> OrderEntity:
     # 1. show all items in stock
     # 2. get quantity
     # 3. confirm and create order
@@ -70,7 +67,7 @@ def create_new_order(stock: list[StockItem]) -> Order:
 
     print(" please provide the following for your reciept")
     username = input(" name: ")
-    new_order = Order(username,selected_item, qty)
+    new_order = OrderEntity(username,selected_item, qty)
     return new_order
     
 
@@ -91,7 +88,10 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     elif user_choice == CREATE_NEW_ITEM:
         print(" still under construction...")
     elif user_choice == LIST_ALL_ORDERS:
-        print(" still under construction...")
+        all_orders = get_all_orders(db_conn)
+        print(" ====  all orders from db ====")
+        for order in all_orders:
+            print(order)
     elif user_choice == CREATE_NEW_ORDER:
         new_order = create_new_order(stock)
         print("\n new order came in:", new_order)

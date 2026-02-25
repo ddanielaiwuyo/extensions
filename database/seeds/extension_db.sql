@@ -29,12 +29,12 @@ VALUES ('Airpods', 13999, 103),
 ('Mercedes Pen', 39999, 30);
 
 INSERT INTO orders (
-	customer_name, quantity, purchased_at, stock_id
+	customer_name, quantity, total_price, purchased_at, stock_id
 ) VALUES 
-('Casey Meuratory', 1, '2026-05-25', 1),
-('Jonathan Blow', 3, '2026-04-25', 1),
-('John Doe', 2, '2020-01-19', 2);
-('Jonathan Blow', 1, '2026-04-25', 2),
-('Bill Evans', 1, '2021-11-12', 3),
-('Phantogram Vivienne', 40, '2011-11-11', 4);
+('Casey Meuratory', 1, 13999,'2026-05-25', 1),
+('Jonathan Blow', 3, 42000,'2026-04-25', 1),
+('John Doe', 2, 160000, '2020-01-19', 2),
+('Jonathan Blow',  1, 80099, '2026-04-25', 2),
+('Bill Evans', 1, 13999,  '2021-11-12', 3),
+('Phantogram Vivienne', 40, 1600000,  '2011-11-11', 4);
 

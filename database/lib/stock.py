@@ -1,5 +1,4 @@
 import psycopg
-# from psycopg.rows import dict_row
 from typing import override
 
 class StockItem:
@@ -42,5 +41,3 @@ def list_stock_items(conn: psycopg.Connection):
     for item in stocks:
         print(item)
 
-# if __name__ == "__main__":
-#     list_stock_items()
