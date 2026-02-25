@@ -27,6 +27,17 @@ class OrderEntity:
         self.purchased_at = date.today()
 
     @override
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, OrderEntity):
+            return False
+        return (
+            self.id == other.id and
+            self.customer_name == other.customer_name and
+            self.quantity == other.quantity and 
+            self.total_price == other.total_price and 
+            self.purchased_at == other.purchased_at
+        )
+    @override
     def __repr__(self) -> str:
         return f""" 
         Order Id: {self.id}
