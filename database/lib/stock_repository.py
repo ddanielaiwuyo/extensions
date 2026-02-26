@@ -16,22 +16,12 @@ class StockItem:
     Price: £{self.price}
     Quantity: {self.quantity}
     """
-    @override
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, StockItem):
-            return False
-
-        return ( self.id == other.id and 
-            self.name == other.name and 
-            self.price == other.price and
-            self.quantity == other.quantity
-                )
 
 class StockRepository:
     def __init__(self, db_conn: psycopg.Connection) -> None:
         self.conn = db_conn
 
-    def add(self, stock: StockItem) -> None:
+    def add_item(self, stock: StockItem) -> None:
         query = """
         INSERT INTO stock_items(name, price, quantity)
         VALUES (%s, %s, %s)
@@ -47,7 +37,6 @@ class StockRepository:
 
         print(" item added to stock successfully")
         return
-    
 
     def get_all(self) -> list[StockItem]:
         results = None

@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS orders (
 INSERT INTO stock_items(name, price, quantity) 
 VALUES ('Airpods', 40000, 103), 
 ('Sony Headphones', 80099, 300),
-('Playstation 4', 49999, 5),
-('Yamaha Ninja', 39999, 30);
+('El Cinco', 49999, 5),
+('Mercedes Pen', 39999, 30);
 
 INSERT INTO orders (
 	customer_name, quantity, total_price, purchased_at, stock_id

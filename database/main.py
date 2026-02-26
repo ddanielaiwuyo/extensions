@@ -21,19 +21,19 @@ def main_menu() -> int:
     """
 
     print(welcome_msg)
-    max_choice = 5
+    max_choice = 4
     while True:
         try:
             choice = int(input(" enter: "))
             choice = choice - 1
 
             if choice < 0 or choice > max_choice:
-                print("  Please provide choice between 1 and ", max_choice)
+                print(" please provide choice between 1 and 4")
                 continue
 
             return choice
         except ValueError:
-            print("  Please provide a valid number")
+            print(" please provide a valid number")
 
 
 LIST_ITEMS_CHOICE = 0
@@ -57,7 +57,7 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
     elif user_choice == CREATE_NEW_ITEM_CHOICE:
         new_stocks = create_new_stock_item()
         for stock_item in new_stocks:
-            stock_repo.add(stock_item)
+            stock_repo.add_item(stock_item)
 
         print("  ===== STOCKS UPDATED ===== ")
     elif user_choice == LIST_ALL_ORDERS_CHOICE:
