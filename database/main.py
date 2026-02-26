@@ -49,6 +49,7 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
 
     if user_choice == LIST_ITEMS_CHOICE:
         current_stocks = stock_repo.get_all()
+        print(f"  {'ID':<2}  {'ITEM':<25} {'PRICE':<10} {'xQUANTITY':>5}")
         for idx, stock in enumerate(current_stocks, start=1):
             print(
                 f"  {idx:<2} {stock.name:<25} £ {stock.price:<10} {stock.quantity:>5}"
@@ -88,8 +89,8 @@ def main() -> None:
             matcher(user_choice, conn)
 
             print()
-            new_op = input("  Go back to main menu or quit?[y/n]: ")
-            if new_op.lower() in ["n", "no"]:
+            new_op = input("  Go back to main menu or quit?[m/q]: ")
+            if new_op.lower() in ["q", "no"]:
                 print("  See you another time")
                 break
         except KeyboardInterrupt:

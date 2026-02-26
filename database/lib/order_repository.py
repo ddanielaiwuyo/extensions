@@ -63,7 +63,7 @@ class OrderRepository:
             params = [
                 order.customer_name,
                 order.quantity,
-                order.total_price,
+                order.total_price * 100,
                 order.purchased_at,
                 order.stock_id,
             ]

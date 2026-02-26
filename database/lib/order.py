@@ -8,8 +8,13 @@ from lib.stock_repository import StockItem
 
 def get_new_orders(stocks: list[StockItem]) -> list[OrderEntity]:
     all_orders = []
+    print("\n  Please provide your name for your reciept\n")
+    customer_name = input("  Name: ")
+    print()
     while True:
         try:
+            # print(f"  {'ID':<2}  {'CUSTOMER':<25} {'TOTAL':<10} {'QUANTITY':>5}")
+            print(f"  {'ID':<2}  {'ITEM':<25} {'PRICE':<10} {'QUANTITY':>5}")
             for idx, stock in enumerate(stocks, start=1):
                 print(f"  {idx:<2} {stock.name:<25} £ {stock.price:<10} {stock.quantity:>5}")
 
@@ -20,10 +25,7 @@ def get_new_orders(stocks: list[StockItem]) -> list[OrderEntity]:
             selected_stock_item = stocks[user_choice]
             qty = Utils.get_quantity(selected_stock_item.quantity)
 
-            print("\n  Please provide the following for your reciept\n")
             total_price = qty * selected_stock_item.price
-            customer_name = input("  Name: ")
-            print()
 
             new_order = OrderEntity(customer_name, qty, total_price)
             new_order.stock_id = selected_stock_item.id
