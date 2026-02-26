@@ -1,6 +1,7 @@
 import psycopg
 from datetime import date
 from typing import override
+from lib.stock_repository import StockItem
 
 
 # OrderEntity represents how an Order
@@ -31,12 +32,13 @@ class OrderEntity:
         if not isinstance(other, OrderEntity):
             return False
         return (
-            self.id == other.id and
-            self.customer_name == other.customer_name and
-            self.quantity == other.quantity and 
-            self.total_price == other.total_price and 
-            self.purchased_at == other.purchased_at
+            self.id == other.id
+            and self.customer_name == other.customer_name
+            and self.quantity == other.quantity
+            and self.total_price == other.total_price
+            and self.purchased_at == other.purchased_at
         )
+
     @override
     def __repr__(self) -> str:
         return f""" 
@@ -55,7 +57,7 @@ class OrderRepository:
 
     def add(self, order: OrderEntity) -> None:
         query = """
-        INSERT INTO orders (customer_name, quantity, total_price, purchased_at, stock_id)
+        INSERT INTO orders (customer_name, quantity_purchased, total_price, purchased_at, stock_id)
         VALUES ( %s, %s, %s, %s, %s);
         """
 
@@ -75,27 +77,33 @@ class OrderRepository:
             raise psycopg.Error(err)
 
     def get_all(self) -> list[OrderEntity]:
-        query = "SELECT * FROM orders"
+        # query = "SELECT * FROM orders"
+        new_query = """
+        SELECT * FROM orders
+        INNER JOIN stock_items
+        on stock_items.id = orders.stock_id
+        """
+        # results = None
         results = None
         try:
             with self.conn.cursor() as cursor:
-                response = cursor.execute(query)
+
+                response = cursor.execute(new_query)
                 results = response.fetchall()
 
-            if results is None:
-                print(" results returned for all orders is none")
-                return results
-
-            all_orders = []
+            all_entries = []
             for row in results:
-                entity = OrderEntity(row["customer_name"], row["quantity"], row["total_price"] / 100)  # type: ignore
-                entity.stock_id = row["stock_id"]  # type: ignore
-                entity.id = row["id"]  # type: ignore
-                entity.purchased_at = row["purchased_at"]  # type: ignore
+                entity = OrderEntity(
+                    row["customer_name"],
+                    row["quantity_purchased"],
+                    row["total_price"] / 100,
+                )
+                stock = StockItem(row["name"], row["price"] / 100, None)
+                entity.stock_item = stock
 
-                all_orders.append(entity)
+                all_entries.append(entity)
 
-            return all_orders
+            return all_entries
         except Exception as err:
             print(" unexpected error occured!")
             raise (err)

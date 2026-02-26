@@ -46,7 +46,7 @@ def test_add_order():
         result = response.fetchall()
 
     row = result[0]
-    actual_result = OrderEntity(row["customer_name"], row["quantity"], row["total_price"])
+    actual_result = OrderEntity(row["customer_name"], row["quantity_purchased"], row["total_price"])
     actual_result.purchased_at = row["purchased_at"]
 
 

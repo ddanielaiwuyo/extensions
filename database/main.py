@@ -63,9 +63,14 @@ def matcher(user_choice: int, db_conn: psycopg.Connection) -> None:
         print("  ===== STOCKS UPDATED ===== ")
     elif user_choice == LIST_ALL_ORDERS_CHOICE:
         all_orders = order_repo.get_all()
-        for idx, order in enumerate(all_orders, start=1):
+        for idx, entry in enumerate(all_orders, start=1):
+            stock = entry.stock_item
             print(
-                f"""  {idx:<2} {order.customer_name:<25} £ {order.total_price:<10} {order.quantity:<4} {order.purchased_at.strftime('%d %B %Y')}"""
+            f"""
+            .{idx}
+            NAME: {entry.customer_name} BOUGHT {stock.name}
+            PAID: £{entry.total_price}, AMT:{entry.quantity} 
+            UNIT_PRICE: £{stock.price} """
             )
 
     elif user_choice == CREATE_NEW_ORDER_CHOICE:
@@ -102,7 +107,6 @@ def main() -> None:
             return
 
     conn.close()
-
 
 if __name__ == "__main__":
     main()
