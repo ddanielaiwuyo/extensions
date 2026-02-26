@@ -32,6 +32,7 @@ public class UI {
 					continue;
 				}
 
+
 				return userInput;
 			} catch (InputMismatchException e) {
 				System.out.println("  Please enter a valid number");

@@ -1,10 +1,11 @@
 import utils.IO;
+import service.StockService;
 
-class Main {
-	final static int LIST_ITEMS_CHOICE = 0;
-	final static int CREATE_NEW_ITEM_CHOICE = 1;
+public class Main {
 
 	public static void main(String[] args) {
+		final int LIST_ITEMS_CHOICE = 0;
+		final int CREATE_NEW_ITEM_CHOICE = 1;
 		System.out.println("hello, world");
 		String[] menu = {
 				"List all shop items", "Create a new item",
@@ -20,7 +21,7 @@ class Main {
 				switch (userChoice) {
 
 					case LIST_ITEMS_CHOICE:
-						sService.listAll();
+						sService.listAllStocks();
 						break;
 
 					case CREATE_NEW_ITEM_CHOICE:
@@ -34,13 +35,14 @@ class Main {
 
 				System.out.print("  Go to main menu or quit?[y/n]: ");
 				String choice = IO.readString();
-				if (!choice.contains("y") || choice.contains("yes")) {
+				if (!choice.contains("y")) {
 					System.out.println("  See you later");
-					break;
+					IO.close();
+					return;
 				}
 			}
 		} catch (Exception e) {
-			System.err.printf(" Unexpected error: %s", e);
+			e.printStackTrace();
 		}
 	}
 }

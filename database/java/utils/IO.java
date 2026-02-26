@@ -64,4 +64,8 @@ public class IO {
 
 	}
 
+	public static void close(){
+		stdin.close();
+	}
+
 }
